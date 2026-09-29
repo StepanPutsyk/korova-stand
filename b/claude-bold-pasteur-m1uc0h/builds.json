@@ -1,0 +1,18 @@
+[
+ {
+  "branch": "claude/bold-pasteur-m1uc0h",
+  "sha": "e690ae3e8631bb913d1b1332316b77cfa87b7271",
+  "short": "e690ae3",
+  "subject": "Звуки: все звуки игры собраны синтезом, кроме тыквы",
+  "time": "2026-09-29 18:12",
+  "iso": "2026-09-29T18:12:15Z"
+ },
+ {
+  "branch": "claude/bold-pasteur-m1uc0h",
+  "sha": "150fb3d489b1ea4e21ddf10fe8a3d0d761caea7b",
+  "short": "150fb3d",
+  "subject": "Ловушки: взрывная тыква-мина с проводами",
+  "time": "2026-09-27 13:21",
+  "iso": "2026-09-27T13:21:11Z"
+ }
+]

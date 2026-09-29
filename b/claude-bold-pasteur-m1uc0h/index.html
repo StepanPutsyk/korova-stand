@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Cow Block · claude/bold-pasteur-m1uc0h</title>
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}
+iframe{position:fixed;inset:0;width:100%;height:100%;border:0}</style>
+</head><body>
+<iframe id="game" allow="autoplay; fullscreen; gamepad"></iframe>
+<style>
+#stand-stamp{position:fixed;left:6px;bottom:6px;z-index:10;padding:3px 8px;border-radius:6px;
+font:11px/1.35 system-ui,-apple-system,sans-serif;color:#fff;background:rgba(0,0,0,.5);
+pointer-events:none;white-space:nowrap;max-width:calc(100vw - 12px);overflow:hidden;text-overflow:ellipsis}
+#stand-stamp.fresh{background:#d9480f;pointer-events:auto;cursor:pointer;font-weight:600}
+#stand-stamp:empty{display:none}
+</style>
+<div id="stand-stamp"></div>
+<script>
+(function (c) {
+  // На странице самой сборки, открытой внутри страницы ветки, плашку рисует та
+  if (!c.frame && window.top !== window) return;
+  const stamp = document.getElementById("stand-stamp");
+  const game = c.frame ? document.getElementById("game") : null;
+  let shown = null, newest = null;
+  const when = b => new Date(b.iso || b.time.replace(" ", "T") + ":00Z");
+  function ago(d) {
+    const m = Math.floor((Date.now() - d) / 60000);
+    if (m < 1) return "только что";
+    if (m < 60) return m + " мин назад";
+    if (m < 1440) return Math.floor(m / 60) + " ч " + (m % 60) + " мин назад";
+    return Math.floor(m / 1440) + " дн назад";
+  }
+  function clock(d) {
+    // дата — только если сборка не сегодняшняя: плашка не должна лезть на кнопки
+    const today = d.toDateString() === new Date().toDateString();
+    return d.toLocaleString("ru-RU", today ? {hour: "2-digit", minute: "2-digit"}
+      : {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"});
+  }
+  function draw() {
+    if (!shown) return;
+    const fresh = newest && newest.short !== shown.short;
+    stamp.className = fresh ? "fresh" : "";
+    stamp.textContent = fresh ? "новая сборка — обновить"
+      : shown.short + " · " + clock(when(shown)) + " · " + ago(when(shown));
+  }
+  function open(b) {
+    shown = newest = b;
+    document.title = c.title + " · " + b.short;
+    game.onload = () => game.contentWindow.focus();
+    game.src = c.prefix + b.short + "/";
+    draw();
+  }
+  const poll = () => fetch(c.builds, {cache: "no-cache"}).then(r => r.json()).then(l => l[0]);
+  if (game) {
+    poll().then(open).catch(() => open(c.fallback));
+  } else {
+    // страница самой сборки: открыта именно она, о свежей только подсказываем
+    shown = c.fallback;
+    draw();
+    poll().then(b => { newest = b; draw(); }).catch(() => {});
+  }
+  setInterval(() => poll().then(b => { newest = b; draw(); }).catch(() => {}), 30000);
+  setInterval(draw, 15000);
+  stamp.addEventListener("click", () => {
+    if (!newest || !shown || newest.short === shown.short) return;
+    if (game) open(newest); else location.href = "../";
+  });
+})({"frame": true, "title": "Cow Block · claude/bold-pasteur-m1uc0h", "builds": "builds.json", "prefix": "", "fallback": {"short": "e690ae3", "time": "2026-09-29 18:12", "iso": "2026-09-29T18:12:15Z"}});
+</script>
+</body></html>
